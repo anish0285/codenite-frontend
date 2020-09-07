@@ -1,0 +1,12 @@
+.buttonclass {
+  outline: none;
+  cursor: pointer;
+  box-shadow: 0 0 10px black;
+  padding: 5px;
+  margin-left: 1rem;
+  font-size: large;
+}
+
+.buttonclass:active {
+  transform: translateX(1px);
+}

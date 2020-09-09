@@ -3,16 +3,20 @@
 .wrapper {
   display: grid;
   grid-template-columns: 34% 66%;
+  grid-gap: 15px;
   padding: 5vh;
   height: 90vh;
   font-family: "Comfortaa", cursive;
 }
 
 .innerwrapper {
-  height: 100%;
+  padding: 0 10px;
+  height: inherit;
 }
 
 .leftpart {
+  display: flex;
+  flex-direction: column;
   padding: 0 10px;
 }
 
@@ -30,7 +34,7 @@
 }
 
 .secondline {
-  margin-top: 10px;
+  margin: 10px 0 15px 0;
 }
 
 .tab {
@@ -41,14 +45,27 @@
   cursor: pointer;
 }
 
+.content {
+  box-shadow: 0 0 10px black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  flex-grow: 1;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
 @media only screen and (max-width: 960px) {
   .wrapper {
     padding: 1vh;
+    grid-gap: 0;
     grid-template-columns: 100%;
     grid-template-rows: 80vh;
     height: 100%;
   }
   .innerwrapper {
     height: 70vh;
+  }
+  .rightpart {
+    margin-bottom: 50px;
   }
 }

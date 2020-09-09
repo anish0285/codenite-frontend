@@ -1,13 +1,17 @@
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 2px;
 }
 
-/* Track */
-::-webkit-scrollbar-track {
-  background: #222;
-}
-
-/* Handle */
 ::-webkit-scrollbar-thumb {
+  background: #528448;
+}
+
+::-moz-selection {
+  color: white;
+  background: #528448;
+}
+
+::selection {
+  color: white;
   background: #528448;
 }

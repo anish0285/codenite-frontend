@@ -1,0 +1,32 @@
+.codewrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px black;
+  border-radius: 5px;
+}
+
+.CodeMirror {
+  flex: 1;
+  font-size: 16px;
+  scrollbar-width: thin;
+}
+
+.CodeMirror-gutters {
+  background-color: white;
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.topline {
+  display: flex;
+  justify-content: right;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  height: auto;
+  box-shadow: 10 0 10px black;
+  z-index: 10;
+  align-items: center;
+  padding: 10px;
+}
+
+@media only screen and (max-width: 960px) {
+}

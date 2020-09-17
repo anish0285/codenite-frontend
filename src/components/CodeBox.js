@@ -1,13 +1,15 @@
 import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 // codemirror
 import CodeMirror from "@uiw/react-codemirror";
 import "codemirror/keymap/sublime";
 import "codemirror/theme/darcula.css";
 import "codemirror/theme/eclipse.css";
-import "codemirror/mode/javascript/javascript";
-import "codemirror/mode/python/python";
-import "codemirror/mode/clike/clike";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/python/python.js";
+import "codemirror/mode/clike/clike.js";
+import "codemirror/addon/edit/closebrackets";
 
 // dropdown
 import Select from "react-select";
@@ -15,28 +17,27 @@ import Select from "react-select";
 // styles
 import "./CodeBox.css";
 import colors from "../colors";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
 
 class CodeBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      langmode: "js",
-      theme: props.theme,
+      langinfo: { value: "js", label: "JavaScript", mode: "text/javascript" },
     };
   }
   handleModeChange = (selected) => {
-    this.setState({ langmode: selected.mode });
+    this.setState({ langinfo: selected });
+    this.props.onModeChange(selected);
   };
+
+  execute = (id) => {};
 
   customStyles = {
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected
-        ? colors[this.props.theme].secondary
-        : colors[this.props.theme].primary,
-      color: state.isSelected
-        ? colors[this.props.theme].primary
-        : colors[this.props.theme].secondary,
+      backgroundColor: colors[this.props.theme].primary,
+      color: colors[this.props.theme].secondary,
       fontSize: "12px",
       "&:hover": {
         color: colors[this.props.theme].primary,
@@ -77,26 +78,41 @@ class CodeBox extends Component {
       },
     }),
   };
+
   render() {
-    const { theme } = this.props;
+    const {
+      theme,
+      data,
+      loading,
+      onRunClick,
+      onCodeChange,
+      executing,
+    } = this.props;
     const options = [
-      { value: "py", label: "Python", mode: "python" },
-      { value: "cpp", label: "C++", mode: "clike" },
-      { value: "cs", label: "C#", mode: "clike" },
-      { value: "ts", label: "TypeScript", mode: "javascript" },
-      { value: "java", label: "Java", mode: "clike" },
-      { value: "js", label: "JavaScript", mode: "javascript" },
+      { value: "py", label: "Python", mode: "text/x-python" },
+      { value: "cpp", label: "C++", mode: "text/x-c++src" },
+      { value: "cs", label: "C#", mode: "text/x-csharp" },
+      { value: "ts", label: "TypeScript", mode: "application/typescript" },
+      { value: "java", label: "Java", mode: "text/x-java" },
+      { value: "js", label: "JavaScript", mode: "text/javascript" },
     ];
     return (
       <div className="codewrap">
         <CodeMirror
           className="codebox"
-          value={"hello"}
+          value={
+            loading
+              ? ""
+              : new Buffer(data[this.state.langinfo.value], "base64").toString(
+                  "ascii"
+                )
+          }
+          onChange={onCodeChange}
           options={{
             theme: theme === "dark" ? "darcula" : "eclipse",
             keyMap: "sublime",
-            mode: this.state.langmode,
-            tabSize: 4,
+            mode: this.state.langinfo.mode,
+            tabSize: 8,
           }}
         />
         <div className="topline">
@@ -112,8 +128,14 @@ class CodeBox extends Component {
               isSearchable={false}
             />
           </span>
-          <span>
-            <button>Run</button>
+          <span onClick={onRunClick}>
+            <button className="runButton">
+              {executing ? (
+                <div className="loader"></div>
+              ) : (
+                <FontAwesomeIcon icon={faPlay} />
+              )}
+            </button>
           </span>
         </div>
       </div>

@@ -3,10 +3,37 @@
   cursor: pointer;
   box-shadow: 0 0 10px black;
   padding: 5px;
-  margin-left: 1rem;
   font-size: large;
 }
 
 .buttonclass:active {
   transform: translateX(1px);
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 60px;
+  background-color: #2b2b2b;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 12px;
+
+  top: 120%;
+  left: 50%;
+  margin-left: -30px;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }

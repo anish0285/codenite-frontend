@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-
 // components
 import Button from "../components/Button";
 import Content from "../components/Content";
@@ -13,7 +12,8 @@ import { faRandom, faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import "./playground.css";
 import colors from "../colors";
 import CodeBox from "../components/CodeBox";
-import { Link } from "react-router-dom";
+import logo from "../assets/logo.svg";
+import Result from "../components/Result";
 
 class playground extends Component {
   constructor(props) {
@@ -24,6 +24,10 @@ class playground extends Component {
       tab: "question",
       data: null,
       err: false,
+      executing: false,
+      outputs: null,
+      code: "",
+      currentMode: "js",
     };
   }
 
@@ -31,21 +35,62 @@ class playground extends Component {
     this.getRandomQuestion();
   };
 
+  handleRunClick = () => {
+    if (!this.state.executing) {
+      this.setState({ ...this.state, executing: true, tab: "result" });
+      let sendobj = {
+        data: this.state.code,
+        extension: this.state.currentMode,
+      };
+      axios
+        .post(
+          `http://http://35.183.61.213:5000/question/run/${this.state.data._id}`,
+          sendobj
+        )
+        .then((response) => {
+          this.setState({
+            ...this.state,
+            executing: false,
+            outputs: response.data,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.setState({ ...this.state, err: true, executing: false });
+        });
+    }
+  };
+
+  handleCodeChange = (e) => {
+    this.setState({ code: e.getValue() });
+  };
+
+  handleModeChange = (selected) => {
+    this.setState({ currentMode: selected.value, executing: false });
+  };
+
   getRandomQuestion = () => {
-    console.log("hello");
+    this.setState({
+      ...this.state,
+      loading: true,
+      tab: "question",
+      data: null,
+      err: false,
+      executing: false,
+      outputs: null,
+      code: "",
+    });
     let sendobj = {};
     sendobj.avoidids = [];
     console.log(sendobj);
-    this.setState({ ...this.state, loading: true });
     axios
-      .post("http://192.168.0.65:5000/question/random", sendobj)
+      .post("http://http://35.183.61.213:5000/question/random", sendobj)
       .then((response) => {
         this.setState({
           ...this.state,
           loading: false,
           data: response.data,
         });
-        console.log(); // remember this line
       })
       .catch((err) => {
         console.log(err);
@@ -81,11 +126,13 @@ class playground extends Component {
               onClick={this.getRandomQuestion}
               style={{ cursor: "pointer" }}
             >
-              Codenite
+              <img src={logo} style={{ height: "30px" }} alt="logo" />
+              <span>odenite</span>
             </div>
             <div className="buttons">
-              <span onClick={this.themeSwitch}>
+              <span onClick={this.themeSwitch} style={{ marginLeft: "1rem" }}>
                 <Button
+                  tooltip="Switch"
                   theme={theme}
                   text={
                     theme === "dark" ? (
@@ -96,8 +143,12 @@ class playground extends Component {
                   }
                 />
               </span>
-              <span onClick={this.getRandomQuestion}>
+              <span
+                onClick={this.getRandomQuestion}
+                style={{ marginLeft: "1rem" }}
+              >
                 <Button
+                  tooltip="Shuffle"
                   theme={theme}
                   text={<FontAwesomeIcon icon={faRandom} />}
                 />
@@ -141,13 +192,27 @@ class playground extends Component {
                 />
               )
             ) : (
-              <div>results hello</div>
+              <Result outputs={this.state.outputs} />
             )}
           </div>
         </div>
 
         <div className="innerwrapper rightpart">
-          <CodeBox theme={theme} />
+          <CodeBox
+            theme={theme}
+            data={this.state.data}
+            loading={this.state.loading}
+            executing={this.state.executing}
+            onRunClick={this.handleRunClick}
+            onCodeChange={this.handleCodeChange}
+            onModeChange={this.handleModeChange}
+          />
+        </div>
+        <div
+          className="trademark"
+          onClick={() => window.open("http://www.anishkumar.me", "_blank")}
+        >
+          Developed by Anish
         </div>
       </div>
     );
